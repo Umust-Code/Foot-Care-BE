@@ -52,13 +52,13 @@ public class AuthController {
 
         // JWT 토큰 생성
         String jwt = jwtTokenProvider.generateToken(loginRequest.getUsername());
-
+//        System.out.println("1");
         // JWT 토큰을 응답으로 반환
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) { //MAP
         // 아이디 중복 체크
         if (memberRepository.existsById(signupRequest.getUsername())) {
             return ResponseEntity.badRequest().body("Error: Username is already taken!");

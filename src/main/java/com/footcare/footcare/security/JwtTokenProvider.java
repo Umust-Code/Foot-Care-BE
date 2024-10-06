@@ -10,7 +10,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final String SECRET_KEY = "secret_key";
+    private final String SECRET_KEY = "qwerasdfzxcv1234otiudopitupdo20938409283";
     private final long EXPIRATION_TIME = 86400000; // jwt 토큰 만료시간 정의한  부분! (86400000=1일)
 
     public String generateToken(String username) {
