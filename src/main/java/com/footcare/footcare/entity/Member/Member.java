@@ -1,11 +1,10 @@
-package com.footcare.footcare.entity;
+package com.footcare.footcare.entity.Member;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "member")
