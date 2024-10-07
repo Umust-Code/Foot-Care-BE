@@ -1,5 +1,4 @@
 package com.footcare.footcare.controller;
-
 import com.footcare.footcare.Repository.Member.MemberRepository;
 import com.footcare.footcare.dto.JwtAuthenticationResponse;
 import com.footcare.footcare.dto.LoginRequest;
@@ -20,7 +19,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 @RestController
-@CrossOrigin(origins = "hhttps://foot-care-fe.vercel.app")
+@CrossOrigin(origins = "https://foot-care-fe.vercel.app")
 @RequestMapping("/api")
 public class AuthController {
 
