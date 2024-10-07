@@ -19,10 +19,10 @@ public class Post {
     private Long postId;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId", insertable = false, updatable = false)
+    @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;  // 카테고리와의 연관 관계 추가
 
-    private Long categoryId;
+    private Long category_id;
 
     private String postName;
 
