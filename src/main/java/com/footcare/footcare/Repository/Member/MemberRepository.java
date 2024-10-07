@@ -1,6 +1,6 @@
-package com.footcare.footcare.Repository;
+package com.footcare.footcare.Repository.Member;
 
-import com.footcare.footcare.entity.Member;
+import com.footcare.footcare.entity.Member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
