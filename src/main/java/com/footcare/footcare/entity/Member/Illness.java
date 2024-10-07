@@ -1,5 +1,6 @@
 package com.footcare.footcare.entity.Member;
 
+import com.footcare.footcare.entity.Member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 
