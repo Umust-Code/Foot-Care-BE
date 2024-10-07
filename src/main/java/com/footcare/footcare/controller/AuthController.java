@@ -1,10 +1,10 @@
 package com.footcare.footcare.controller;
 
-import com.footcare.footcare.Repository.MemberRepository;
+import com.footcare.footcare.Repository.Member.MemberRepository;
 import com.footcare.footcare.dto.JwtAuthenticationResponse;
 import com.footcare.footcare.dto.LoginRequest;
 import com.footcare.footcare.dto.SignupRequest;
-import com.footcare.footcare.entity.Member;
+import com.footcare.footcare.entity.Member.Member;
 import com.footcare.footcare.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +13,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
 @RestController
+@CrossOrigin(origins = "hhttps://foot-care-fe.vercel.app")
 @RequestMapping("/api")
 public class AuthController {
 
@@ -34,9 +32,10 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private MemberRepository memberRepository;
+
+
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
