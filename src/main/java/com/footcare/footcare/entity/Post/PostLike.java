@@ -15,7 +15,7 @@ public class PostLike {
     private Long postLikeId;
 
     @ManyToOne
-    @JoinColumn(name = "postId")
+    @JoinColumn(name = "post_id")
     private Post post;
 
     private Long postLikeCount;

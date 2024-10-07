@@ -4,7 +4,7 @@ import com.footcare.footcare.Repository.MemberRepository;
 import com.footcare.footcare.dto.JwtAuthenticationResponse;
 import com.footcare.footcare.dto.LoginRequest;
 import com.footcare.footcare.dto.SignupRequest;
-import com.footcare.footcare.entity.Member;
+import com.footcare.footcare.entity.Member.Member;
 import com.footcare.footcare.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +43,7 @@ public class AuthController {
         // 사용자 인증
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
+                        loginRequest.getId(),
                         loginRequest.getPassword()
                 )
         );
@@ -51,7 +51,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);  // SecurityContext에 인증 정보 설정
 
         // JWT 토큰 생성
-        String jwt = jwtTokenProvider.generateToken(loginRequest.getUsername());
+        String jwt = jwtTokenProvider.generateToken(loginRequest.getId());
 //        System.out.println("1");
         // JWT 토큰을 응답으로 반환
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
@@ -60,13 +60,13 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) { //MAP
         // 아이디 중복 체크
-        if (memberRepository.existsById(signupRequest.getUsername())) {
+        if (memberRepository.existsById(signupRequest.getId())) {
             return ResponseEntity.badRequest().body("Error: Username is already taken!");
         }
 
         // 새로운 Member 엔티티 생성
         Member user = new Member();
-        user.setId(signupRequest.getUsername());
+        user.setId(signupRequest.getId());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));  // 비밀번호 암호화
         user.setName(signupRequest.getName());
         user.setPhone(signupRequest.getPhone());

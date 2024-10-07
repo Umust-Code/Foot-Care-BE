@@ -2,6 +2,8 @@ package com.footcare.footcare.Config;
 
 import com.footcare.footcare.security.JwtAuthenticationFilter;
 import com.footcare.footcare.security.JwtTokenProvider;
+import com.footcare.footcare.service.MyUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,12 +19,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
-
     private final JwtTokenProvider jwtTokenProvider;
+    private final MyUserDetailsService myUserDetailsService;
 
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, MyUserDetailsService myUserDetailsService) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.myUserDetailsService = myUserDetailsService;
     }
 
     @Bean
@@ -49,13 +52,13 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> {
-            // 실제 사용자 로딩 로직 구현 필요
-            return null;
-        };
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        return myUserDetailsService;
+//        };
     }
-}
+
+
+
 
 

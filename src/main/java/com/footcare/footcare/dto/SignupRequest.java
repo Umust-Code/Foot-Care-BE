@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class SignupRequest {
 
-    private String username;  // 회원 아이디
+    private String id;  // 회원 아이디
     private String password;  // 비밀번호
     private String name;      // 이름
     private String phone;     // 휴대폰 번호 (옵션)

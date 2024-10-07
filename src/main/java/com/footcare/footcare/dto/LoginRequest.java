@@ -2,19 +2,19 @@ package com.footcare.footcare.dto;
 
 public class LoginRequest {
 
-    private String username;  // 사용자 이름
+    private String id;  // 사용자 ID
     private String password;  // 비밀번호
 
     // 기본 생성자
     public LoginRequest() {}
 
     // Getter와 Setter
-    public String getUsername() {
-        return username;
+    public String getId() {  // 이제 getId()로 Spring Security에 전달
+        return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPassword() {
