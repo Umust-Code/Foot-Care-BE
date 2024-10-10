@@ -90,4 +90,10 @@ public class PostService {
         }
         return Optional.empty();
     }
+
+    // 카테고리 ID로 게시물 조회
+    public List<PostDTO> getPostsByCategoryId(Long categoryId) {
+        List<Post> posts = postRepository.findByCategoryCategoryId(categoryId);
+        return posts.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
 }
