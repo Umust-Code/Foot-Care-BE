@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf ->csrf.disable()) //세션 비활성화하기!
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/api/login", "/api/signup","/api/posts/**").permitAll()
+                        .requestMatchers("/api/login", "/api/signup","/api/posts/**","/api/comments/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)  // JwtTokenProvider 전달

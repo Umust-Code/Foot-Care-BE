@@ -2,12 +2,14 @@ package com.footcare.footcare.entity.Post;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "comment")
 @Getter
+@Setter
 public class Comment {
 
     @Id
@@ -15,7 +17,7 @@ public class Comment {
     private Long commentId;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "postId", nullable = false)
     private Post post;
 
     private String commentContent;

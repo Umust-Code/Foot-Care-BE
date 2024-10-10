@@ -28,6 +28,7 @@ public class PostService {
         dto.setPostContentName(post.getPostContentName());
         dto.setPostDate(post.getPostDate());
         dto.setPostView(post.getPostView());
+        dto.setLikeCount(post.getLikeCount());
         return dto;
     }
 
@@ -40,6 +41,7 @@ public class PostService {
         post.setPostContentName(dto.getPostContentName());
         post.setPostDate(dto.getPostDate());
         post.setPostView(dto.getPostView());
+        post.setLikeCount(dto.getLikeCount());
         return post;
     }
 
@@ -67,6 +69,7 @@ public class PostService {
             post.setPostName(postDTO.getPostName());
             post.setPostContentName(postDTO.getPostContentName());
             post.setPostDate(postDTO.getPostDate());
+            post.setLikeCount(postDTO.getLikeCount());
             Post updatedPost = postRepository.save(post);
             return convertToDTO(updatedPost);
         } else {
@@ -89,5 +92,38 @@ public class PostService {
             return Optional.of(convertToDTO(post));
         }
         return Optional.empty();
+    }
+
+    // 카테고리 ID로 게시물 조회
+    public List<PostDTO> getPostsByCategoryId(Long categoryId) {
+        List<Post> posts = postRepository.findByCategoryCategoryId(categoryId);
+        return posts.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    // 좋아요 수 증가 (DTO 반환)
+    public PostDTO increaseLikeCount(Long postId) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            post.setLikeCount(post.getLikeCount() + 1);
+            Post updatedPost = postRepository.save(post);
+            return convertToDTO(updatedPost);
+        }
+        return null;
+    }
+
+    // 좋아요 수 감소 (DTO 반환)
+    public PostDTO decreaseLikeCount(Long postId) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            // 좋아요 수가 0보다 큰 경우에만 감소
+            if (post.getLikeCount() > 0) {
+                post.setLikeCount(post.getLikeCount() - 1);
+            }
+            Post updatedPost = postRepository.save(post);
+            return convertToDTO(updatedPost);
+        }
+        return null;
     }
 }

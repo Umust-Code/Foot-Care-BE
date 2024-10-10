@@ -17,19 +17,6 @@ public class PostController {
 
     @Autowired
     private PostService postService;
-//    @Autowired
-//    private CategoryRepository categoryRepository;
-//
-//    public PostDTO createPost(PostDTO postDTO) {
-//        // categoryId가 존재하는지 확인
-//        if (!categoryRepository.existsById(postDTO.getCategoryId())) {
-//            throw new IllegalArgumentException("존재하지 않는 카테고리 ID입니다: " + postDTO.getCategoryId());
-//        }
-//
-//        Post post = convertToEntity(postDTO);
-//        Post savedPost = postRepository.save(post);
-//        return convertToDTO(savedPost);
-//    }
 
     @PostMapping
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
@@ -63,5 +50,25 @@ public class PostController {
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<PostDTO>> getPostsByCategoryId(@PathVariable Long categoryId) {
+        List<PostDTO> posts = postService.getPostsByCategoryId(categoryId);
+        return ResponseEntity.ok(posts);
+    }
+
+    // 특정 게시물의 좋아요 수 증가
+    @PutMapping("/{postId}/like")
+    public ResponseEntity<PostDTO> increaseLike(@PathVariable Long postId) {
+        PostDTO updatedPost = postService.increaseLikeCount(postId);
+        return updatedPost != null ? ResponseEntity.ok(updatedPost) : ResponseEntity.notFound().build();
+    }
+
+    // 특정 게시물의 좋아요 수 감소
+    @PutMapping("/{postId}/unlike")
+    public ResponseEntity<PostDTO> decreaseLike(@PathVariable Long postId) {
+        PostDTO updatedPost = postService.decreaseLikeCount(postId);
+        return updatedPost != null ? ResponseEntity.ok(updatedPost) : ResponseEntity.notFound().build();
     }
 }

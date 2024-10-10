@@ -22,8 +22,6 @@ public class FootcareApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		categoryRepository.deleteAll();
-		System.out.println("기존 카테고리 데이터가 삭제되었습니다.");
 
 		List<Category> categories = Arrays.asList(
 				new Category(1L, "족저근막염"),
