@@ -57,4 +57,18 @@ public class PostController {
         List<PostDTO> posts = postService.getPostsByCategoryId(categoryId);
         return ResponseEntity.ok(posts);
     }
+
+    // 특정 게시물의 좋아요 수 증가
+    @PutMapping("/{postId}/like")
+    public ResponseEntity<PostDTO> increaseLike(@PathVariable Long postId) {
+        PostDTO updatedPost = postService.increaseLikeCount(postId);
+        return updatedPost != null ? ResponseEntity.ok(updatedPost) : ResponseEntity.notFound().build();
+    }
+
+    // 특정 게시물의 좋아요 수 감소
+    @PutMapping("/{postId}/unlike")
+    public ResponseEntity<PostDTO> decreaseLike(@PathVariable Long postId) {
+        PostDTO updatedPost = postService.decreaseLikeCount(postId);
+        return updatedPost != null ? ResponseEntity.ok(updatedPost) : ResponseEntity.notFound().build();
+    }
 }

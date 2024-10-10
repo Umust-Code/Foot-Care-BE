@@ -1,5 +1,7 @@
 package com.footcare.footcare.entity.Post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.footcare.footcare.entity.PostMember;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,6 +34,8 @@ public class Post {
     private Date postDate;
 
     private Long postView;
+
+    private Long likeCount = 0L;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostMember> postMembers;
