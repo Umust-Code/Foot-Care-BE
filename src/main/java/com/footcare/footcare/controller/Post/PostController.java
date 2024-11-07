@@ -24,7 +24,7 @@ public class PostController {
         return ResponseEntity.ok(createdPost);
     }
 
-    @GetMapping
+    @GetMapping("/category/0")
     public List<PostDTO> getAllPosts() {
         return postService.getAllPosts();
     }
