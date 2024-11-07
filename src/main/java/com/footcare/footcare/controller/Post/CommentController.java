@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "https://foot-care-fe.vercel.app")
 @RequestMapping("/api/comments")
 public class CommentController {
 
