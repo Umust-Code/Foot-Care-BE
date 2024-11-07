@@ -18,6 +18,13 @@ public class PostDTO {
     private Date postDate;
     private Long postView;
 
-    private Long likeCount = 0L;
+    private Long likeCount;
 
+    public Long getLikeCount() {
+        return likeCount == null ? 0L : likeCount;
+    }
+
+    public void setLikeCount(Long likeCount) {
+        this.likeCount = likeCount == null ? 0L : likeCount;
+    }
 }

@@ -28,7 +28,7 @@ public class PostService {
         dto.setPostContentName(post.getPostContentName());
         dto.setPostDate(post.getPostDate());
         dto.setPostView(post.getPostView());
-        post.setLikeCount(dto.getLikeCount() != null ? dto.getLikeCount() : 0L);
+        dto.setLikeCount(post.getLikeCount());
         return dto;
     }
 
@@ -41,7 +41,6 @@ public class PostService {
         post.setPostContentName(dto.getPostContentName());
         post.setPostDate(dto.getPostDate());
         post.setPostView(dto.getPostView());
-        post.setLikeCount(dto.getLikeCount());
         return post;
     }
 
@@ -105,7 +104,7 @@ public class PostService {
         Optional<Post> postOptional = postRepository.findById(postId);
         if (postOptional.isPresent()) {
             Post post = postOptional.get();
-            post.setLikeCount(post.getLikeCount() + 1);
+            post.setLikeCount((post.getLikeCount() != null ? post.getLikeCount() : 0L) + 1);  // 기존 값에 1 증가
             Post updatedPost = postRepository.save(post);
             return convertToDTO(updatedPost);
         }
@@ -117,13 +116,15 @@ public class PostService {
         Optional<Post> postOptional = postRepository.findById(postId);
         if (postOptional.isPresent()) {
             Post post = postOptional.get();
-            // 좋아요 수가 0보다 큰 경우에만 감소
-            if (post.getLikeCount() > 0) {
-                post.setLikeCount(post.getLikeCount() - 1);
+            // likeCount가 null일 경우 기본값 0L로 간주하고, 0보다 큰 경우에만 감소
+            Long currentLikeCount = (post.getLikeCount() != null) ? post.getLikeCount() : 0L;
+            if (currentLikeCount > 0) {
+                post.setLikeCount(currentLikeCount - 1);
             }
             Post updatedPost = postRepository.save(post);
             return convertToDTO(updatedPost);
         }
         return null;
     }
+
 }
