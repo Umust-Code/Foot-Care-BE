@@ -35,6 +35,7 @@ public class Post {
 
     private Long postView;
 
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long likeCount = 0L;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
