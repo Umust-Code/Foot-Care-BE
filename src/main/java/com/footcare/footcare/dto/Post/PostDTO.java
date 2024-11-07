@@ -17,6 +17,7 @@ public class PostDTO {
     private String postContentName;
     private Date postDate;
     private Long postView;
-    private Long likeCount;
+
+    private Long likeCount = 0L;
 
 }

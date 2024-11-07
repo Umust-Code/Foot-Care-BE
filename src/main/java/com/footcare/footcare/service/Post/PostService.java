@@ -28,7 +28,7 @@ public class PostService {
         dto.setPostContentName(post.getPostContentName());
         dto.setPostDate(post.getPostDate());
         dto.setPostView(post.getPostView());
-        dto.setLikeCount(post.getLikeCount());
+        post.setLikeCount(dto.getLikeCount() != null ? dto.getLikeCount() : 0L);
         return dto;
     }
 
