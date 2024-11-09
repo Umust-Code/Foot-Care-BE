@@ -22,11 +22,11 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
-        Member member = memberRepository.findById(Long.valueOf(id))
+        Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + id));
 
         // UserDetails 객체 반환
-        return new User(member.getId().toString(), member.getPassword(), new ArrayList<>());
+        return new User(member.getId(), member.getPassword(), new ArrayList<>());
     }
 }
 
