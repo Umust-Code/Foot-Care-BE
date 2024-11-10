@@ -45,6 +45,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         try {
+            // 인증 수행
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getId(),
@@ -53,12 +54,23 @@ public class AuthController {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Access 및 Refresh 토큰 생성
             String accessToken = jwtTokenProvider.generateAccessToken(loginRequest.getId());
             String refreshToken = jwtTokenProvider.generateRefreshToken(loginRequest.getId());
-            Map<String, String> tokens = new HashMap<>();
-            tokens.put("accessToken", accessToken);
-            tokens.put("refreshToken", refreshToken);
-            return ResponseEntity.ok(tokens);
+
+            // 로그인한 사용자 정보 조회
+            Member user = memberRepository.findById(loginRequest.getId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // 응답 데이터에 토큰과 설문조사 완료 여부 추가
+            Map<String, Object> response = new HashMap<>();
+            response.put("accessToken", accessToken);
+            response.put("refreshToken", refreshToken);
+            response.put("memberId", user.getMemberId());
+            response.put("isSurveyCompleted", user.getIsSurveyCompleted());
+
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             System.err.println("Authentication failed: " + e.getMessage());
@@ -67,14 +79,33 @@ public class AuthController {
     }
 
 
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
+
+    //    @PostMapping("/refresh")
+//    public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
+//        if (jwtTokenProvider.validateToken(refreshToken)) {
+//            String username = jwtTokenProvider.getUsernameFromToken(refreshToken);
+//            String newAccessToken = jwtTokenProvider.generateAccessToken(username);
+//            return ResponseEntity.ok(new JwtAuthenticationResponse(newAccessToken));
+//        } else {
+//            return ResponseEntity.status(403).body("Invalid Refresh Token");
+//        }
+//    }
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String refreshToken) {
+        // "Bearer " 접두사를 제거하여 실제 토큰을 추출
+        if (refreshToken.startsWith("Bearer ")) {
+            refreshToken = refreshToken.substring(7);
+        }
+
         if (jwtTokenProvider.validateToken(refreshToken)) {
+            // Refresh Token에서 사용자 이름 추출
             String username = jwtTokenProvider.getUsernameFromToken(refreshToken);
+
+            // 새 Access Token 생성
             String newAccessToken = jwtTokenProvider.generateAccessToken(username);
             return ResponseEntity.ok(new JwtAuthenticationResponse(newAccessToken));
         } else {
-            return ResponseEntity.status(403).body("Invalid Refresh Token");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid Refresh Token");
         }
     }
 

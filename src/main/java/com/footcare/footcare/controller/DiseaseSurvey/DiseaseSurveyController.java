@@ -2,8 +2,11 @@ package com.footcare.footcare.controller.DiseaseSurvey;
 
 import com.footcare.footcare.dto.DiseaseSurveyDto.DiseaseSurveyDto;
 import com.footcare.footcare.dto.DiseaseSurveyDto.TotalScoreRequestDto;
+import com.footcare.footcare.security.JwtTokenProvider;
 import com.footcare.footcare.service.DiseaseSurvey.DiseaseSurveyService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +22,25 @@ public class DiseaseSurveyController {
 
     @Autowired
     private DiseaseSurveyService diseaseSurveyService;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
 
     @PostMapping("/submit-scores")
-    public ResponseEntity<String> submitScores(@RequestBody TotalScoreRequestDto requestDto) {
-        diseaseSurveyService.saveScores(requestDto);
-        return ResponseEntity.ok("Scores have been recorded successfully.");
+    public ResponseEntity<String> submitScores(@RequestBody TotalScoreRequestDto requestDto, HttpServletRequest request) {
+        try {
+            String accessToken = jwtTokenProvider.getJwtFromRequest(request);
+            if (accessToken == null || !jwtTokenProvider.validateToken(accessToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("401 Unauthorized: Invalid or missing token");
+            }
+
+            // Process score submission (assuming a service is available)
+            diseaseSurveyService.saveScores(requestDto);
+            return ResponseEntity.ok("Scores have been recorded successfully.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error recording scores: " + e.getMessage());
+        }
     }
 
     @GetMapping("/all")

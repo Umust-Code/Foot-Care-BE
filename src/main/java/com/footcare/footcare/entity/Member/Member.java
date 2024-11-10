@@ -31,5 +31,8 @@ public class Member {
     private LocalDateTime exitDate;  // 변경된 부분
 
     private String address;
+
+    @Column(nullable = false, length = 1)
+    private String isSurveyCompleted = "N";
 }
 

@@ -3,6 +3,7 @@ package com.footcare.footcare.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final String SECRET_KEY = "qwerasdfzxcv1234otiudopitupdo20938409283";
-    private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 15; // 15분
+    private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 ; // 15분
     private final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 1주일
 
     public String generateAccessToken(String username) {
@@ -50,5 +51,14 @@ public class JwtTokenProvider {
         Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
         Date expirationDate = claims.getExpiration();
         return expirationDate.getTime() - System.currentTimeMillis();
+    }
+
+    // 토큰 검증
+    public String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }
