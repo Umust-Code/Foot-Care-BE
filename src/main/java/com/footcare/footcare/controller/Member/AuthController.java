@@ -1,11 +1,13 @@
-package com.footcare.footcare.controller;
+package com.footcare.footcare.controller.Member;
 import com.footcare.footcare.Repository.Member.MemberRepository;
 import com.footcare.footcare.dto.JwtAuthenticationResponse;
 import com.footcare.footcare.dto.LoginRequest;
 import com.footcare.footcare.dto.SignupRequest;
 import com.footcare.footcare.entity.Member.Member;
 import com.footcare.footcare.security.JwtTokenProvider;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "https://foot-care-fe.vercel.app")
@@ -36,23 +40,42 @@ public class AuthController {
 
 
 
+
+
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        // 사용자 인증
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getId(),
-                        loginRequest.getPassword()
-                )
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getId(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);  // SecurityContext에 인증 정보 설정
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String accessToken = jwtTokenProvider.generateAccessToken(loginRequest.getId());
+            String refreshToken = jwtTokenProvider.generateRefreshToken(loginRequest.getId());
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("accessToken", accessToken);
+            tokens.put("refreshToken", refreshToken);
+            return ResponseEntity.ok(tokens);
 
-        // JWT 토큰 생성
-        String jwt = jwtTokenProvider.generateToken(loginRequest.getId());
-//        System.out.println("1");
-        // JWT 토큰을 응답으로 반환
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        } catch (Exception e) {
+            System.err.println("Authentication failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Authentication failed: " + e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
+        if (jwtTokenProvider.validateToken(refreshToken)) {
+            String username = jwtTokenProvider.getUsernameFromToken(refreshToken);
+            String newAccessToken = jwtTokenProvider.generateAccessToken(username);
+            return ResponseEntity.ok(new JwtAuthenticationResponse(newAccessToken));
+        } else {
+            return ResponseEntity.status(403).body("Invalid Refresh Token");
+        }
     }
 
     @PostMapping("/signup")
@@ -79,4 +102,6 @@ public class AuthController {
 
         return ResponseEntity.ok("User registered successfully!");
     }
+
+
 }

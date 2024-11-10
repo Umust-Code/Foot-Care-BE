@@ -21,27 +21,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        // 요청에서 JWT 추출
-        String jwt = getJwtFromRequest(request);
+        String accessToken = getJwtFromRequest(request);
+        String refreshToken = getRefreshTokenFromRequest(request);
 
-        // JWT가 유효하다면 SecurityContext에 사용자 정보 저장
-        if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
-            String username = jwtTokenProvider.getUsernameFromToken(jwt);
-
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    username, null, null);  // 권한 목록을 null로 설정하거나 사용자 권한을 추가할 수 있음
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            // SecurityContext에 사용자 정보 설정
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            if (StringUtils.hasText(accessToken) && jwtTokenProvider.validateToken(accessToken)) {
+                // Access 토큰이 유효할 때 인증 설정
+                setAuthenticationContext(accessToken, request);
+            } else if (StringUtils.hasText(refreshToken) && jwtTokenProvider.validateToken(refreshToken)) {
+                // Access 토큰이 만료되고 Refresh 토큰이 유효한 경우 새 Access 토큰 발급
+                String username = jwtTokenProvider.getUsernameFromToken(refreshToken);
+                String newAccessToken = jwtTokenProvider.generateAccessToken(username); // 새 Access 토큰 생성
+                response.setHeader("New-Access-Token", "Bearer " + newAccessToken); // 새 Access 토큰을 응답 헤더로 설정
+                setAuthenticationContext(newAccessToken, request); // 새로 발급된 Access 토큰으로 인증 설정
+            }
+        } catch (Exception ex) {
+            System.err.println("Could not set user authentication in security context: " + ex.getMessage());
         }
 
-        // 다음 필터로 요청 전달
         filterChain.doFilter(request, response);
+    }
+
+    private void setAuthenticationContext(String token, HttpServletRequest request) {
+        String username = jwtTokenProvider.getUsernameFromToken(token);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                username, null, null);  // 필요한 경우 권한을 추가 가능
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    private String getRefreshTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization-Refresh");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }

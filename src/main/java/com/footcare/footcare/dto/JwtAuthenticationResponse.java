@@ -8,11 +8,11 @@ import lombok.Setter;
 public class JwtAuthenticationResponse {
 
 
-    private String token;  // 클라이언트에게 반환할 JWT 토큰
+    private String accessToken;  // 클라이언트에게 반환할 JWT 토큰
 
     // 기본 생성자
-    public JwtAuthenticationResponse(String token) {
-        this.token = token;
+    public JwtAuthenticationResponse(String accessToken) {
+        this.accessToken = accessToken;
     }
 
 }
