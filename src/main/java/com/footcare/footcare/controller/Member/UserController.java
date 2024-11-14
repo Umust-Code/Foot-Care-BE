@@ -1,11 +1,13 @@
 package com.footcare.footcare.controller.Member;
 
 import com.footcare.footcare.Repository.Member.MemberRepository;
+import com.footcare.footcare.dto.Member.UpdateUserDTO;
 import com.footcare.footcare.entity.Member.Member;
 import com.footcare.footcare.service.Member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -20,7 +22,10 @@ public class UserController {
     @Autowired
     private MemberService memberService;
 
-    @DeleteMapping("/{memberId}")
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @DeleteMapping("/{memberId}/delete")
     public ResponseEntity<?> deleteUser(@PathVariable Long memberId, @RequestHeader("Authorization") String token) {
         // 토큰에서 ID 확인 및 인증 (필요한 경우 추가)
 
@@ -33,6 +38,48 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: User not found.");
         }
     }
+
+    @PutMapping("/{memberId}/update")
+    public ResponseEntity<?> updateUser(
+            @PathVariable Long memberId,
+            @RequestBody UpdateUserDTO updateRequest,
+            @RequestHeader("Authorization") String token) {
+
+        // 사용자 존재 확인
+        Optional<Member> memberOptional = memberRepository.findById(memberId);
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+
+            // 현재 비밀번호 확인
+            if (updateRequest.getCurrentPassword() != null &&
+                    !passwordEncoder.matches(updateRequest.getCurrentPassword(), member.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error: Current password is incorrect.");
+            }
+
+            // 정보 업데이트
+            if (updateRequest.getName() != null) {
+                member.setName(updateRequest.getName());
+            }
+
+            if (updateRequest.getAddress() != null) {
+                member.setAddress(updateRequest.getAddress());
+            }
+
+            if (updateRequest.getPhone() != null) {
+                member.setPhone(updateRequest.getPhone());
+            }
+
+            if (updateRequest.getNewPassword() != null) {
+                member.setPassword(passwordEncoder.encode(updateRequest.getNewPassword()));
+            }
+
+            memberRepository.save(member); // 저장
+            return ResponseEntity.ok("User updated successfully!");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: User not found.");
+        }
+    }
+
 
     @GetMapping("/{memberId}/check-survey")
     public ResponseEntity<String> checkSurveyStatus(@PathVariable Long memberId) {
