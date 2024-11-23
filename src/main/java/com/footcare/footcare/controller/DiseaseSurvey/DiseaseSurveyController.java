@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "https://foot-care-fe.vercel.app")
@@ -34,7 +35,6 @@ public class DiseaseSurveyController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("401 Unauthorized: Invalid or missing token");
             }
 
-            // Process score submission (assuming a service is available)
             diseaseSurveyService.saveScores(requestDto);
             return ResponseEntity.ok("Scores have been recorded successfully.");
 
@@ -76,4 +76,14 @@ public class DiseaseSurveyController {
         List<Date> surveyDates = diseaseSurveyService.getSurveyDatesByMemberId(memberId);
         return ResponseEntity.ok(surveyDates);
     }
+
+    @GetMapping("/all-surveys")
+    public ResponseEntity<List<Map<String, Object>>> getAllSurveysGroupedByDate(
+            @RequestHeader("memberId") Long memberId) {
+        List<Map<String, Object>> surveys = diseaseSurveyService.getAllSurveysGroupedByDate(memberId);
+        return ResponseEntity.ok(surveys);
+    }
+
+
+
 }

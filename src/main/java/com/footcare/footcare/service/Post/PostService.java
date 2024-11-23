@@ -1,10 +1,13 @@
 package com.footcare.footcare.service.Post;
 
+import com.footcare.footcare.Repository.Member.MemberRepository;
+import com.footcare.footcare.Repository.Post.PostMemberRepository;
 import com.footcare.footcare.Repository.Post.PostRepository;
 
 import com.footcare.footcare.dto.Post.PostDTO;
+import com.footcare.footcare.entity.Member.Member;
 import com.footcare.footcare.entity.Post.Post;
-
+import com.footcare.footcare.entity.Post.PostMember;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,10 @@ public class PostService {
 
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private PostMemberRepository postMemberRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
     // Entity -> DTO 변환
     private PostDTO convertToDTO(Post post) {
@@ -99,32 +106,70 @@ public class PostService {
         return posts.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // 좋아요 수 증가 (DTO 반환)
-    public PostDTO increaseLikeCount(Long postId) {
-        Optional<Post> postOptional = postRepository.findById(postId);
-        if (postOptional.isPresent()) {
-            Post post = postOptional.get();
-            post.setLikeCount((post.getLikeCount() != null ? post.getLikeCount() : 0L) + 1);  // 기존 값에 1 증가
-            Post updatedPost = postRepository.save(post);
-            return convertToDTO(updatedPost);
+    public PostDTO likePost(Long memberId, Long postId) {
+
+        Optional<PostMember> existingLike = postMemberRepository.findByMemberIdAndPostId(memberId, postId);
+        if (existingLike.isPresent()) {
+            return null;
         }
-        return null;
+
+        PostMember postMember = new PostMember();
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        postMember.setMember(member); // Member 객체 설정
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        postMember.setPost(post); // Post 객체 설정
+
+        postMemberRepository.save(postMember);
+
+        post.setLikeCount((post.getLikeCount() != null ? post.getLikeCount() : 0L) + 1);
+        Post updatedPost = postRepository.save(post);
+
+        return convertToDTO(updatedPost);
     }
 
-    // 좋아요 수 감소 (DTO 반환)
-    public PostDTO decreaseLikeCount(Long postId) {
-        Optional<Post> postOptional = postRepository.findById(postId);
-        if (postOptional.isPresent()) {
-            Post post = postOptional.get();
-            // likeCount가 null일 경우 기본값 0L로 간주하고, 0보다 큰 경우에만 감소
-            Long currentLikeCount = (post.getLikeCount() != null) ? post.getLikeCount() : 0L;
-            if (currentLikeCount > 0) {
-                post.setLikeCount(currentLikeCount - 1);
-            }
-            Post updatedPost = postRepository.save(post);
-            return convertToDTO(updatedPost);
+
+
+
+    public PostDTO unlikePost(Long memberId, Long postId) {
+
+        Optional<PostMember> existingLike = postMemberRepository.findByMemberIdAndPostId(memberId, postId);
+        if (existingLike.isEmpty()) {
+            return null;
         }
-        return null;
+
+        postMemberRepository.delete(existingLike.get());
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Long currentLikeCount = (post.getLikeCount() != null ? post.getLikeCount() : 0L);
+        if (currentLikeCount > 0) {
+            post.setLikeCount(currentLikeCount - 1);
+        }
+        Post updatedPost = postRepository.save(post);
+
+        return convertToDTO(updatedPost);
     }
+
+    public List<PostDTO> getPostsLikedByMember(Long memberId) {
+        List<Post> likedPosts = postMemberRepository.findPostsLikedByMember(memberId);
+
+        return likedPosts.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PostDTO> getTop5PostsByLikeCount() {
+        List<Post> topPosts = postRepository.findTop5ByOrderByLikeCountDesc();
+        return topPosts.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
 }
