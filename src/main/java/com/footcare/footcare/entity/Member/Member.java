@@ -34,8 +34,5 @@ public class Member {
 
     @Column(nullable = false, length = 1)
     private String isSurveyCompleted = "N";
-
-    @Column(name = "fg", nullable = false, length = 1)
-    private String fg = "N"; // 기본값을 'N'으로 설정
 }
 
