@@ -1,8 +1,5 @@
 package com.footcare.footcare.entity.Post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.footcare.footcare.entity.PostMember;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

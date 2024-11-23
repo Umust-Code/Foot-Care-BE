@@ -10,4 +10,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 카테고리 ID로 게시물 조회
     List<Post> findByCategoryCategoryId(Long categoryId);
+
+    @Query(value = "SELECT * FROM post ORDER BY like_count DESC LIMIT 5", nativeQuery = true)
+    List<Post> findTop5ByOrderByLikeCountDesc();
+
 }

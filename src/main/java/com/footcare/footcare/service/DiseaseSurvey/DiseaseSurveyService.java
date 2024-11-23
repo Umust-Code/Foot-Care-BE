@@ -10,8 +10,7 @@ import com.footcare.footcare.entity.Post.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,6 +69,30 @@ public class DiseaseSurveyService {
 
     public List<Date> getSurveyDatesByMemberId(Long memberId) {
         return diseaseSurveyRepository.findDistinctDiseaseDatesByMemberId(memberId);
+    }
+
+    public List<Map<String, Object>> getAllSurveysGroupedByDate(Long memberId) {
+        // 특정 사용자의 모든 설문조사 데이터 가져오기
+        List<DiseaseSurvey> surveys = diseaseSurveyRepository.findByMemberId(memberId);
+
+        // 날짜별로 그룹화
+        Map<String, List<DiseaseSurvey>> groupedByDate = surveys.stream()
+                .collect(Collectors.groupingBy(survey -> survey.getDiseaseDate().toString()));
+
+        // 결과를 변환하여 리스트로 반환
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map.Entry<String, List<DiseaseSurvey>> entry : groupedByDate.entrySet()) {
+            Map<String, Object> surveyData = new HashMap<>();
+            surveyData.put("date", entry.getKey());
+
+            entry.getValue().forEach(survey ->
+                    surveyData.put("d" + survey.getCategory().getCategoryId(), Integer.parseInt(survey.getDiseaseScore()))
+            );
+
+            result.add(surveyData);
+        }
+
+        return result;
     }
 
     private DiseaseSurveyDto convertToDto(DiseaseSurvey survey) {
