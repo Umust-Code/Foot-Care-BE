@@ -1,15 +1,10 @@
 package com.footcare.footcare.dto.Member;
-
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @Getter
 @Setter
-@NoArgsConstructor
-public class UpdateUserDTO {
+public class UserInfoDTO {
     private String name;
     private String address;
     private String phone;
-
 }
