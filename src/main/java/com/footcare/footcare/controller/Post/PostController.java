@@ -84,4 +84,11 @@ public class PostController {
         List<PostDTO> likedPosts = postService.getPostsLikedByMember(memberId);
         return ResponseEntity.ok(likedPosts);
     }
+
+    // order by 좋아요 desc limit 5
+    @GetMapping("/top-liked")
+    public ResponseEntity<List<PostDTO>> getTop5LikedPosts() {
+        List<PostDTO> topPosts = postService.getTop5PostsByLikeCount();
+        return ResponseEntity.ok(topPosts);
+    }
 }

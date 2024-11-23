@@ -163,6 +163,13 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    public List<PostDTO> getTop5PostsByLikeCount() {
+        List<Post> topPosts = postRepository.findTop5ByOrderByLikeCountDesc();
+        return topPosts.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 
 
 }
