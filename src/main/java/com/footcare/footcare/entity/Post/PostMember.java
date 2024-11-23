@@ -1,14 +1,14 @@
-package com.footcare.footcare.entity;
+package com.footcare.footcare.entity.Post;
 
 
 import com.footcare.footcare.entity.Member.Member;
-import com.footcare.footcare.entity.Post.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 
-@Entity
-@Table(name = "postmember")
+@Entity@Table(name = "postmember")
+@Setter
 @Getter
 public class PostMember {
 

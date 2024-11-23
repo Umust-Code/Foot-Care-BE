@@ -58,17 +58,30 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    // 특정 게시물의 좋아요 수 증가
-    @PutMapping("/{postId}/like")
-    public ResponseEntity<PostDTO> increaseLike(@PathVariable Long postId) {
-        PostDTO updatedPost = postService.increaseLikeCount(postId);
-        return updatedPost != null ? ResponseEntity.ok(updatedPost) : ResponseEntity.notFound().build();
+    // 게시물에 좋아요 추가
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<PostDTO> likePost(@RequestHeader("memberId") Long memberId, @PathVariable Long postId) {
+        PostDTO updatedPost = postService.likePost(memberId, postId);
+        if (updatedPost != null) {
+            return ResponseEntity.ok(updatedPost);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
-    // 특정 게시물의 좋아요 수 감소
-    @PutMapping("/{postId}/unlike")
-    public ResponseEntity<PostDTO> decreaseLike(@PathVariable Long postId) {
-        PostDTO updatedPost = postService.decreaseLikeCount(postId);
-        return updatedPost != null ? ResponseEntity.ok(updatedPost) : ResponseEntity.notFound().build();
+    // 게시물에 좋아요 취소
+    @DeleteMapping("/{postId}/unlike")
+    public ResponseEntity<PostDTO> unlikePost(@RequestHeader("memberId") Long memberId, @PathVariable Long postId) {
+        PostDTO updatedPost = postService.unlikePost(memberId, postId);
+        if (updatedPost != null) {
+            return ResponseEntity.ok(updatedPost);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+    
+    // 사용자 별 어느 게시물에 좋아요 눌렀는지
+    @GetMapping("/liked-by-user")
+    public ResponseEntity<List<PostDTO>> getPostsLikedByMember(@RequestHeader("memberId") Long memberId) {
+        List<PostDTO> likedPosts = postService.getPostsLikedByMember(memberId);
+        return ResponseEntity.ok(likedPosts);
     }
 }
