@@ -69,6 +69,7 @@ public class AuthController {
             response.put("refreshToken", refreshToken);
             response.put("memberId", user.getMemberId());
             response.put("isSurveyCompleted", user.getIsSurveyCompleted());
+            response.put("fg", user.getFg());
 
             return ResponseEntity.ok(response);
 
