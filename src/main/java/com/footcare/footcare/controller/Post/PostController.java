@@ -59,8 +59,8 @@ public class PostController {
     }
 
     // 게시물에 좋아요 추가
-    @PostMapping("/{postId}/like")
-    public ResponseEntity<PostDTO> likePost(@RequestHeader("memberId") Long memberId, @PathVariable Long postId) {
+    @PostMapping("/{postId}/like/{memberId}")
+    public ResponseEntity<PostDTO> likePost(@PathVariable Long memberId, @PathVariable Long postId) {
         PostDTO updatedPost = postService.likePost(memberId, postId);
         if (updatedPost != null) {
             return ResponseEntity.ok(updatedPost);
@@ -69,18 +69,18 @@ public class PostController {
     }
 
     // 게시물에 좋아요 취소
-    @DeleteMapping("/{postId}/unlike")
-    public ResponseEntity<PostDTO> unlikePost(@RequestHeader("memberId") Long memberId, @PathVariable Long postId) {
+    @DeleteMapping("/{postId}/unlike/{memberId}")
+    public ResponseEntity<PostDTO> unlikePost(@PathVariable Long memberId, @PathVariable Long postId) {
         PostDTO updatedPost = postService.unlikePost(memberId, postId);
         if (updatedPost != null) {
             return ResponseEntity.ok(updatedPost);
         }
         return ResponseEntity.badRequest().build();
     }
-    
+
     // 사용자 별 어느 게시물에 좋아요 눌렀는지
-    @GetMapping("/liked-by-user")
-    public ResponseEntity<List<PostDTO>> getPostsLikedByMember(@RequestHeader("memberId") Long memberId) {
+    @GetMapping("/liked-by-user/{memberId}")
+    public ResponseEntity<List<PostDTO>> getPostsLikedByMember(@PathVariable Long memberId) {
         List<PostDTO> likedPosts = postService.getPostsLikedByMember(memberId);
         return ResponseEntity.ok(likedPosts);
     }
@@ -90,5 +90,11 @@ public class PostController {
     public ResponseEntity<List<PostDTO>> getTop5LikedPosts() {
         List<PostDTO> topPosts = postService.getTop5PostsByLikeCount();
         return ResponseEntity.ok(topPosts);
+    }
+
+    @GetMapping("/{postId}/is-liked/{memberId}")
+    public ResponseEntity<String> isPostLiked(@PathVariable Long memberId, @PathVariable Long postId) {
+        String likeStatus = postService.isPostLikedByUser(memberId, postId);
+        return ResponseEntity.ok(likeStatus);
     }
 }

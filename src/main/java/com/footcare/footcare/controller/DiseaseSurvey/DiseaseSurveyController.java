@@ -77,9 +77,9 @@ public class DiseaseSurveyController {
         return ResponseEntity.ok(surveyDates);
     }
 
-    @GetMapping("/all-surveys")
+    @GetMapping("/all-surveys/{memberId}")
     public ResponseEntity<List<Map<String, Object>>> getAllSurveysGroupedByDate(
-            @RequestHeader("memberId") Long memberId) {
+            @PathVariable Long memberId) {
         List<Map<String, Object>> surveys = diseaseSurveyService.getAllSurveysGroupedByDate(memberId);
         return ResponseEntity.ok(surveys);
     }

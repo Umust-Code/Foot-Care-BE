@@ -18,5 +18,9 @@ public interface PostMemberRepository extends JpaRepository<PostMember, Long> {
 
     @Query("SELECT pm.post FROM PostMember pm WHERE pm.member.memberId = :memberId")
     List<Post> findPostsLikedByMember(@Param("memberId") Long memberId);
+
+    @Query("SELECT pm.likefg FROM PostMember pm WHERE pm.member.memberId = :memberId AND pm.post.postId = :postId")
+    Optional<String> findLikeStatusByMemberIdAndPostId(@Param("memberId") Long memberId, @Param("postId") Long postId);
+
 }
 
