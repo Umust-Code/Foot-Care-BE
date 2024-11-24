@@ -109,39 +109,50 @@ public class PostService {
     public PostDTO likePost(Long memberId, Long postId) {
 
         Optional<PostMember> existingLike = postMemberRepository.findByMemberIdAndPostId(memberId, postId);
+
         if (existingLike.isPresent()) {
-            return null;
+            PostMember postMember = existingLike.get();
+            if ("Y".equalsIgnoreCase(postMember.getLikefg())) {
+                throw new IllegalStateException("Post is already liked by the user.");
+            }
+
+            postMember.setLikefg("Y");
+            postMemberRepository.save(postMember);
+        } else {
+
+            PostMember postMember = new PostMember();
+
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new RuntimeException("Member not found"));
+            postMember.setMember(member);
+
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new RuntimeException("Post not found"));
+            postMember.setPost(post);
+
+            postMember.setLikefg("Y");
+            postMemberRepository.save(postMember);
         }
-
-        PostMember postMember = new PostMember();
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-        postMember.setMember(member); // Member 객체 설정
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
-        postMember.setPost(post); // Post 객체 설정
-
-        postMemberRepository.save(postMember);
-
         post.setLikeCount((post.getLikeCount() != null ? post.getLikeCount() : 0L) + 1);
         Post updatedPost = postRepository.save(post);
 
         return convertToDTO(updatedPost);
     }
 
-
-
-
     public PostDTO unlikePost(Long memberId, Long postId) {
 
         Optional<PostMember> existingLike = postMemberRepository.findByMemberIdAndPostId(memberId, postId);
-        if (existingLike.isEmpty()) {
-            return null;
+
+        if (existingLike.isEmpty() || !"Y".equalsIgnoreCase(existingLike.get().getLikefg())) {
+            throw new IllegalStateException("Post is not liked by the user.");
         }
 
-        postMemberRepository.delete(existingLike.get());
+        PostMember postMember = existingLike.get();
+        postMember.setLikefg("N");
+        postMemberRepository.save(postMember);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -154,6 +165,7 @@ public class PostService {
 
         return convertToDTO(updatedPost);
     }
+
 
     public List<PostDTO> getPostsLikedByMember(Long memberId) {
         List<Post> likedPosts = postMemberRepository.findPostsLikedByMember(memberId);
@@ -169,6 +181,12 @@ public class PostService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+    public String isPostLikedByUser(Long memberId, Long postId) {
+        Optional<String> likeStatus = postMemberRepository.findLikeStatusByMemberIdAndPostId(memberId, postId);
+        return likeStatus.orElse("N");
+    }
+
 
 
 

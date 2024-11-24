@@ -24,5 +24,8 @@ public class PostMember {
     @JoinColumn(name = "memberId")
     private Member member;
 
+    @Column(name = "likefg", nullable = false, length = 1)
+    private String likefg = "N";
+
 
 }

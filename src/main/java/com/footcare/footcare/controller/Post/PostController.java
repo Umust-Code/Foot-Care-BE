@@ -91,4 +91,10 @@ public class PostController {
         List<PostDTO> topPosts = postService.getTop5PostsByLikeCount();
         return ResponseEntity.ok(topPosts);
     }
+
+    @GetMapping("/{postId}/is-liked/{memberId}")
+    public ResponseEntity<String> isPostLiked(@PathVariable Long memberId, @PathVariable Long postId) {
+        String likeStatus = postService.isPostLikedByUser(memberId, postId);
+        return ResponseEntity.ok(likeStatus);
+    }
 }
