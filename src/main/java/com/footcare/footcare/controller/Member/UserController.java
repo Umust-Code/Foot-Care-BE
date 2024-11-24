@@ -36,6 +36,7 @@ public class UserController {
 
 
             UserInfoDTO userInfoDTO = new UserInfoDTO();
+            userInfoDTO.setId(member.getId());
             userInfoDTO.setName(member.getName());
             userInfoDTO.setAddress(member.getAddress());
             userInfoDTO.setPhone(member.getPhone());
