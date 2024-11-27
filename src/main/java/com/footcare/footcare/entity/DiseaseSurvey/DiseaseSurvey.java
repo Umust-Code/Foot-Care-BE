@@ -1,5 +1,6 @@
 package com.footcare.footcare.entity.DiseaseSurvey;
 
+import com.footcare.footcare.entity.Member.Member;
 import com.footcare.footcare.entity.Post.Category;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,8 +19,10 @@ public class DiseaseSurvey {
     @Column(name = "diseaseSurveyId")
     private Long diseaseSurveyId;
 
-    @Column(name = "memberId", nullable = false)
-    private Long memberId;
+
+    @ManyToOne
+    @JoinColumn(name = "memberId", nullable = false)
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId", nullable = false)

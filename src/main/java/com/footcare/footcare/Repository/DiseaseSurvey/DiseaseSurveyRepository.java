@@ -11,9 +11,9 @@ import java.util.List;
 @Repository
 public interface DiseaseSurveyRepository extends JpaRepository<DiseaseSurvey, Long> {
 
-    List<DiseaseSurvey> findByMemberId(Long memberId);
-    List<DiseaseSurvey> findByMemberIdAndDiseaseDate(Long memberId, Date diseaseDate);
-    @Query("SELECT DISTINCT d.diseaseDate FROM DiseaseSurvey d WHERE d.memberId = :memberId")
+    List<DiseaseSurvey> findByMember_MemberId(Long memberId);
+    List<DiseaseSurvey> findByMember_MemberIdAndDiseaseDate(Long memberId, Date diseaseDate);
+    @Query("SELECT DISTINCT d.diseaseDate FROM DiseaseSurvey d WHERE d.member.memberId = :memberId")
     List<Date> findDistinctDiseaseDatesByMemberId(Long memberId);
 }
 

@@ -1,5 +1,6 @@
 package com.footcare.footcare.entity.Member;
 
+import com.footcare.footcare.entity.DiseaseSurvey.DiseaseSurvey;
 import com.footcare.footcare.entity.Post.PostMember;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -43,6 +44,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostMember> postMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiseaseSurvey> diseaseSurveys;
 
     // 연관관계 편의 메서드
     public void addPostMember(PostMember postMember) {
