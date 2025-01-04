@@ -16,5 +16,7 @@ public class CommentDTO {
     private String commentContent;
     private Date commentDate;
 
+    private Long memberId;
+
 }
 

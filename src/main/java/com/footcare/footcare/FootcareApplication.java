@@ -62,7 +62,8 @@ public class FootcareApplication implements CommandLineRunner {
 					new Category(6L, "발목 염좌"),
 					new Category(7L, "생활 습관"),
 					new Category(8L, "건강 정보"),
-					new Category(9L, "제품 추천")
+					new Category(9L, "제품 추천"),
+					new Category(10L, "체험단/리뷰")
 			);
 
 			categoryRepository.saveAll(categories);
