@@ -28,6 +28,8 @@ public class Member {
 
     private String name;
 
+    private String sex;
+
     private String phone;
 
     private LocalDateTime signUpDate;
