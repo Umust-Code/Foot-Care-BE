@@ -17,6 +17,7 @@ public class CommentDTO {
     private Date commentDate;
 
     private Long memberId;
+    private String name;
 
 }
 
