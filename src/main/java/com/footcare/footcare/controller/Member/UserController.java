@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -131,5 +132,26 @@ public class UserController {
 
         String responseMessage = isAvailable ? "N" : "Y";
         return ResponseEntity.ok(responseMessage);
+    }
+
+    // 전체 사용자 수 조회
+    @GetMapping("/total-users")
+    public ResponseEntity<Long> getTotalUsers() {
+        Long totalUsers = memberService.getTotalMembers();
+        return ResponseEntity.ok(totalUsers);
+    }
+
+    // 성별 구분 사용자 수 조회
+    @GetMapping("/users-by-gender")
+    public ResponseEntity<Map<String, Long>> getUsersByGender() {
+        Map<String, Long> genderStats = memberService.getMembersByGender();
+        return ResponseEntity.ok(genderStats);
+    }
+
+    // 월별 신규 가입자 수 조회
+    @GetMapping("/monthly-signups")
+    public ResponseEntity<Map<String, Long>> getMonthlySignups() {
+        Map<String, Long> monthlyStats = memberService.getMonthlySignups();
+        return ResponseEntity.ok(monthlyStats);
     }
 }
