@@ -123,4 +123,13 @@ public class UserController {
         memberService.completeSurvey(memberId);
         return ResponseEntity.ok("Survey marked as completed");
     }
+
+    // ID 중복 검사
+    @GetMapping("/check-id")
+    public ResponseEntity<String> checkIdAvailability(@RequestParam String id) {
+        boolean isAvailable = memberService.isIdAvailable(id);
+
+        String responseMessage = isAvailable ? "N" : "Y";
+        return ResponseEntity.ok(responseMessage);
+    }
 }

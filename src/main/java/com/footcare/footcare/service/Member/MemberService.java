@@ -26,4 +26,9 @@ public class MemberService {
         member.setIsSurveyCompleted("Y");
         memberRepository.save(member);
     }
+
+    // ID 중복 검사
+    public boolean isIdAvailable(String id) {
+        return !memberRepository.existsById(id);
+    }
 }
