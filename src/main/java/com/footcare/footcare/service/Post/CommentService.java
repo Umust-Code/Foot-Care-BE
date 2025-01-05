@@ -36,6 +36,7 @@ public class CommentService {
         dto.setCommentContent(comment.getCommentContent());
         dto.setCommentDate(comment.getCommentDate());
         dto.setMemberId(comment.getMember().getMemberId());  // MemberId 추가
+        dto.setName(comment.getMember().getName());
         return dto;
     }
 
@@ -110,5 +111,27 @@ public class CommentService {
             return convertToMemberDTO(comment.getMember());
         }
         return null;
+    }
+    // 댓글 조회
+    public List<CommentDTO> searchComments(CommentDTO searchDTO) {
+        List<Comment> comments;
+
+        if (searchDTO.getMemberId() != null && searchDTO.getCommentContent() != null) {
+            // 사용자 ID와 댓글 내용으로 조회
+            comments = commentRepository.findByMemberMemberIdAndCommentContentContaining(searchDTO.getMemberId(), searchDTO.getCommentContent());
+        } else if (searchDTO.getMemberId() != null) {
+            // 사용자 ID로 조회
+            comments = commentRepository.findByMemberMemberId(searchDTO.getMemberId());
+        } else if (searchDTO.getCommentContent() != null) {
+            // 댓글 내용으로 조회
+            comments = commentRepository.findByCommentContentContaining(searchDTO.getCommentContent());
+        } else {
+            // 전체 댓글 조회
+            comments = commentRepository.findAll();
+        }
+
+        return comments.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }

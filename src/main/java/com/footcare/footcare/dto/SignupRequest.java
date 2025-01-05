@@ -13,6 +13,7 @@ public class SignupRequest {
     private String name;      // 이름
     private String phone;     // 휴대폰 번호 (옵션)
     private String address;   // 배송 주소 (옵션)
+    private String sex;
 
     public SignupRequest() {
     }
