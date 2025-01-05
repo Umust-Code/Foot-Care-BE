@@ -51,5 +51,11 @@ public class CommentController {
         MemberDTO memberDTO = commentService.getMemberByCommentId(commentId);
         return memberDTO != null ? ResponseEntity.ok(memberDTO) : ResponseEntity.notFound().build();
     }
+
+    // 댓글 조회
+    @PostMapping("/search")
+    public List<CommentDTO> searchComments(@RequestBody CommentDTO searchDTO) {
+        return commentService.searchComments(searchDTO);
+    }
 }
 
