@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -17,6 +18,9 @@ public class PostDTO {
     private String postContentName;
     private Date postDate;
     private Long postView;
+    private LocalDate createdDate; // 게시물 생성 날짜
+    private Long memberId;
+    private String postFg;
 
     private Long likeCount;
 

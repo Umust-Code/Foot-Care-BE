@@ -1,4 +1,4 @@
-package com.footcare.footcare.dto;
+package com.footcare.footcare.dto.Post;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
