@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,41 +61,82 @@ public class PostService {
         dto.setPostMemberId(postMember.getPostMemberId());
         dto.setMemberId(postMember.getMember().getMemberId());
         dto.setPostId(postMember.getPost().getPostId());
+        dto.setIsActive(postMember.getIsActive());
         return dto;
     }
+
 
     public PostMember convertDTOToPostMember(PostMemberDTO dto) {
         PostMember postMember = new PostMember();
         postMember.setPostMemberId(dto.getPostMemberId());
-        // Member와 Post는 다른 서비스/리포지토리에서 조회 후 설정
+        postMember.setIsActive(dto.getIsActive());
+
+        // Member와 Post는 ID로 조회하여 설정
+        Member member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + dto.getMemberId()));
+        Post post = postRepository.findById(dto.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + dto.getPostId()));
+
+        postMember.setMember(member);
+        postMember.setPost(post);
         return postMember;
     }
 
-    public PostDTO createPost(PostDTO postDTO) {
+    public Map<String, Object> createPost(PostDTO postDTO) {
+        Map<String, Object> response = new HashMap<>();
+
         // 사용자를 확인
         Member member = memberRepository.findById(postDTO.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + postDTO.getMemberId()));
 
+
         // 오늘 작성된 게시물 개수 확인 (PostMember 기준)
-        long todayPostCount = postMemberRepository.countByMemberAndCreatedDate(member, LocalDate.now());
-        if (todayPostCount >= 11) {
-            throw new IllegalArgumentException("하루에 10개까지만 게시물을 작성할 수 있습니다.");
+        long todayActivePostCount = postMemberRepository.countByMemberAndCreatedDate(member, LocalDate.now());
+        if (todayActivePostCount >= 10) {
+            // 초과된 게시물의 상태를 'N'으로 변경
+            List<PostMember> excessPosts = postMemberRepository.findExcessPostsByMemberAndCreatedDate(member, LocalDate.now());
+            excessPosts.forEach(postMember -> postMember.setIsActive("N"));
+            postMemberRepository.saveAll(excessPosts);
+
+
+            response.put("status", "EXCEEDED_LIMIT");
+            response.put("message", "하루에 작성할 수 있는 게시물은 최대 10개입니다.");
+            response.put("isActive", "N"); // Add 'isActive' as 'N'
+
+            response.put("excessPosts", excessPosts.stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList()));
+            return response;
         }
 
-        // 게시물 생성
+
+        // 게시물 생성 (DTO -> Entity 변환)
         Post post = convertToEntity(postDTO);
         Post savedPost = postRepository.save(post);
 
+        if ("admin".equalsIgnoreCase(member.getId())) {
+            post.setPostFg("admin");
+            response.put("PostFg", "admin");
+        } else {
+            post.setPostFg("user");
+            response.put("PostFg", "user");
+        }
         // PostMember 생성 및 저장
         PostMember postMember = new PostMember();
         postMember.setPost(savedPost);
         postMember.setMember(member);
         postMember.setCreatedDate(LocalDate.now());
+        postMember.setIsActive("Y"); // Set 'isActive' as 'Y'
         postMemberRepository.save(postMember);
 
-        // DTO로 변환하여 반환
-        return convertToDTO(savedPost);
+        // 응답 구성 (Entity -> DTO 변환)
+        response.put("status", "SUCCESS");
+        response.put("message", "게시물이 성공적으로 생성되었습니다.");
+        response.put("post", convertToDTO(savedPost));
+        response.put("isActive", "Y"); // Add 'isActive' as 'Y'
+        return response;
     }
+
 
     public List<PostDTO> getAllPosts() {
         return postRepository.findAll().stream()

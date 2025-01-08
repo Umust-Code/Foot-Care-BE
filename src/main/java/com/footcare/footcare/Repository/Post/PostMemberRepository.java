@@ -26,6 +26,10 @@ public interface PostMemberRepository extends JpaRepository<PostMember, Long> {
 
     long countByMemberAndCreatedDate(Member member, LocalDate createDate);
 
+    long countByMemberAndCreatedDateAndIsActive(Member member, LocalDate createdDate, String isActive);
+
+    @Query("SELECT pm FROM PostMember pm WHERE pm.member = :member AND pm.createdDate = :createdDate AND pm.isActive = 'Y' ORDER BY pm.id DESC")
+    List<PostMember> findExcessPostsByMemberAndCreatedDate(Member member, LocalDate createdDate);
 
 }
 
