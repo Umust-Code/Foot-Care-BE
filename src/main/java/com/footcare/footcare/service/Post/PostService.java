@@ -5,6 +5,7 @@ import com.footcare.footcare.Repository.Post.PostMemberRepository;
 import com.footcare.footcare.Repository.Post.PostRepository;
 
 import com.footcare.footcare.dto.Post.PostDTO;
+import com.footcare.footcare.dto.Post.PostMemberDTO;
 import com.footcare.footcare.entity.Member.Member;
 import com.footcare.footcare.entity.Post.Post;
 import com.footcare.footcare.entity.Post.PostMember;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +27,7 @@ public class PostService {
     private PostMemberRepository postMemberRepository;
     @Autowired
     private MemberRepository memberRepository;
+
 
     // Entity -> DTO 변환
     private PostDTO convertToDTO(Post post) {
@@ -51,9 +54,44 @@ public class PostService {
         return post;
     }
 
+    public PostMemberDTO convertToDto(PostMember postMember) {
+        PostMemberDTO dto = new PostMemberDTO();
+        dto.setPostMemberId(postMember.getPostMemberId());
+        dto.setMemberId(postMember.getMember().getMemberId());
+        dto.setPostId(postMember.getPost().getPostId());
+        return dto;
+    }
+
+    public PostMember convertDTOToPostMember(PostMemberDTO dto) {
+        PostMember postMember = new PostMember();
+        postMember.setPostMemberId(dto.getPostMemberId());
+        // Member와 Post는 다른 서비스/리포지토리에서 조회 후 설정
+        return postMember;
+    }
+
     public PostDTO createPost(PostDTO postDTO) {
+        // 사용자를 확인
+        Member member = memberRepository.findById(postDTO.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + postDTO.getMemberId()));
+
+        // 오늘 작성된 게시물 개수 확인 (PostMember 기준)
+        long todayPostCount = postMemberRepository.countByMemberAndCreatedDate(member, LocalDate.now());
+        if (todayPostCount >= 11) {
+            throw new IllegalArgumentException("하루에 10개까지만 게시물을 작성할 수 있습니다.");
+        }
+
+        // 게시물 생성
         Post post = convertToEntity(postDTO);
         Post savedPost = postRepository.save(post);
+
+        // PostMember 생성 및 저장
+        PostMember postMember = new PostMember();
+        postMember.setPost(savedPost);
+        postMember.setMember(member);
+        postMember.setCreatedDate(LocalDate.now());
+        postMemberRepository.save(postMember);
+
+        // DTO로 변환하여 반환
         return convertToDTO(savedPost);
     }
 
@@ -186,8 +224,4 @@ public class PostService {
         Optional<String> likeStatus = postMemberRepository.findLikeStatusByMemberIdAndPostId(memberId, postId);
         return likeStatus.orElse("N");
     }
-
-
-
-
 }

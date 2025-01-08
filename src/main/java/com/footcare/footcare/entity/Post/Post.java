@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class Post {
 
     private Long category_id;
 
+
     private String postName;
 
     private String postContentName;
@@ -34,6 +36,8 @@ public class Post {
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long likeCount = 0L;
+
+    private String postFg;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostMember> postMembers;

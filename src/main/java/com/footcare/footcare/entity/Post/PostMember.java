@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 
 @Entity@Table(name = "postmember")
 @Setter
@@ -27,5 +29,8 @@ public class PostMember {
     @Column(name = "likefg", nullable = false, length = 1)
     private String likefg = "N";
 
+
+    @Column(nullable = false)
+    private LocalDate createdDate;
 
 }
