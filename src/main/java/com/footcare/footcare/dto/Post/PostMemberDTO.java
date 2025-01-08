@@ -12,6 +12,7 @@ public class PostMemberDTO {
     private Long postMemberId;
     private Long memberId;
     private Long postId;
+    private String isActive;
 
 }
 

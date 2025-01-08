@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -19,9 +20,14 @@ public class PostController {
     private PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
-        PostDTO createdPost = postService.createPost(postDTO);
-        return ResponseEntity.ok(createdPost);
+    public ResponseEntity<?> createPost(@RequestBody PostDTO postDTO) {
+        Map<String, Object> result = postService.createPost(postDTO);
+
+        if ("EXCEEDED_LIMIT".equals(result.get("status"))) {
+            return ResponseEntity.badRequest().body(result);
+        }
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/category/0")

@@ -1,6 +1,7 @@
 package com.footcare.footcare.entity.Post;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.footcare.footcare.entity.Member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class PostMember {
 
     @ManyToOne
     @JoinColumn(name = "postId")
+    @JsonIgnore
     private Post post;
 
     @ManyToOne
@@ -32,5 +34,8 @@ public class PostMember {
 
     @Column(nullable = false)
     private LocalDate createdDate;
+
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'Y'")
+    private String isActive = "Y"; // 게시물 활성 상태 (Y: 활성, N: 비활성)
 
 }
