@@ -35,6 +35,8 @@ public class Post {
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long likeCount = 0L;
 
+    private String postFg;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostMember> postMembers;
 
