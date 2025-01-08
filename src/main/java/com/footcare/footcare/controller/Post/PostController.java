@@ -18,10 +18,8 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    // 관리자가 게시물 생성
     @PostMapping
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
-        postDTO.setPostFg("admin");
         PostDTO createdPost = postService.createPost(postDTO);
         return ResponseEntity.ok(createdPost);
     }

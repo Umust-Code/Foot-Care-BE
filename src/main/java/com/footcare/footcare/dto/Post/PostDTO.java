@@ -19,7 +19,6 @@ public class PostDTO {
     private Long postView;
 
     private Long likeCount;
-    private String postFg;
 
     public Long getLikeCount() {
         return likeCount == null ? 0L : likeCount;

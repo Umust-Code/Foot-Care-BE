@@ -48,7 +48,6 @@ public class PostService {
         post.setPostContentName(dto.getPostContentName());
         post.setPostDate(dto.getPostDate());
         post.setPostView(dto.getPostView());
-        post.setPostFg(dto.getPostFg());
         return post;
     }
 
