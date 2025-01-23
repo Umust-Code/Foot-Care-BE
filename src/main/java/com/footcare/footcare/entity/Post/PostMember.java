@@ -33,7 +33,7 @@ public class PostMember {
 
 
     @Column(nullable = false)
-    private LocalDate createdDate;
+    private LocalDate createdDate = LocalDate.now();
 
     @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'Y'")
     private String isActive = "Y"; // 게시물 활성 상태 (Y: 활성, N: 비활성)

@@ -37,6 +37,7 @@ public class PostController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) {
+
         Optional<PostDTO> postDTO = postService.getPostByIdAndIncreaseView(id);
         return postDTO.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

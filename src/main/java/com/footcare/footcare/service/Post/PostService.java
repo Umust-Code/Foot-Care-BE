@@ -41,6 +41,7 @@ public class PostService {
         dto.setPostDate(post.getPostDate());
         dto.setPostView(post.getPostView());
         dto.setLikeCount(post.getLikeCount());
+        dto.setMemberId(post.getPostMembers().get(0).getMember().getMemberId());
         return dto;
     }
 
