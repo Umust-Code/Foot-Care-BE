@@ -37,6 +37,7 @@ public class CommentService {
         dto.setCommentDate(comment.getCommentDate());
         dto.setMemberId(comment.getMember().getMemberId());  // MemberId 추가
         dto.setName(comment.getMember().getName());
+        dto.setIcon(comment.getMember().getIcon());
         return dto;
     }
 

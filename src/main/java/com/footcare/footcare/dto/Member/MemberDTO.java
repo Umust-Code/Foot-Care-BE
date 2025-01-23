@@ -20,5 +20,6 @@ public class MemberDTO {
     private Date stopDate;
     private Date exitDate;
     private String address;
+    private String icon;
 
 }

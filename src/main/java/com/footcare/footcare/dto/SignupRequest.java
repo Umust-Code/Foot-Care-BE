@@ -14,6 +14,7 @@ public class SignupRequest {
     private String phone;     // 휴대폰 번호 (옵션)
     private String address;   // 배송 주소 (옵션)
     private String sex;
+    private String icon;
 
     public SignupRequest() {
     }
