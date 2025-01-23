@@ -41,6 +41,7 @@ public class UserController {
             userInfoDTO.setName(member.getName());
             userInfoDTO.setAddress(member.getAddress());
             userInfoDTO.setPhone(member.getPhone());
+            userInfoDTO.setIcon(member.getIcon());
 
             return ResponseEntity.ok(userInfoDTO);
         } else {

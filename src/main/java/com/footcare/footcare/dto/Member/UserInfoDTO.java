@@ -8,4 +8,5 @@ public class UserInfoDTO {
     private String name;
     private String address;
     private String phone;
+    private String icon;
 }
