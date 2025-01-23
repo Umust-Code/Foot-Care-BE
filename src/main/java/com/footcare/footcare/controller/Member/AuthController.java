@@ -125,6 +125,7 @@ public class AuthController {
         user.setPhone(signupRequest.getPhone());
         user.setAddress(signupRequest.getAddress());
         user.setSex(signupRequest.getSex());
+        user.setIcon(signupRequest.getIcon());
 
         // 현재 날짜를 LocalDateTime으로 변환하여 설정
         LocalDateTime signUpDate = LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault());

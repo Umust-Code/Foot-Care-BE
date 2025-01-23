@@ -38,6 +38,8 @@ public class Member {
 
     private String address;
 
+    private String icon;
+
     @Column(nullable = false, length = 1)
     private String isSurveyCompleted = "N";
 
