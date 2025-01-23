@@ -41,7 +41,7 @@ public class PostService {
         dto.setPostDate(post.getPostDate());
         dto.setPostView(post.getPostView());
         dto.setLikeCount(post.getLikeCount());
-        dto.setMemberId(post.getPostMembers().get(0).getMember().getMemberId());
+        //dto.setMemberId(post.getPostMembers().get(0).getMember().getMemberId());
         return dto;
     }
 
@@ -177,7 +177,9 @@ public class PostService {
             Post post = postOptional.get();
             post.setPostView(post.getPostView() + 1);
             postRepository.save(post);
-            return Optional.of(convertToDTO(post));
+            PostDTO postDTO = convertToDTO(post);
+            postDTO.setMemberId(post.getPostMembers().get(0).getMember().getMemberId());
+            return Optional.of(postDTO);
         }
         return Optional.empty();
     }
