@@ -154,16 +154,21 @@ public class PostService {
         Optional<Post> postOptional = postRepository.findById(id);
         if (postOptional.isPresent()) {
             Post post = postOptional.get();
+
+            postDTO.setLikeCount(post.getLikeCount());
+
             post.setPostName(postDTO.getPostName());
             post.setPostContentName(postDTO.getPostContentName());
             post.setPostDate(postDTO.getPostDate());
             post.setLikeCount(postDTO.getLikeCount());
+
             Post updatedPost = postRepository.save(post);
             return convertToDTO(updatedPost);
         } else {
             return null;
         }
     }
+
 
     public void deletePost(Long id) {
         postRepository.deleteById(id);
