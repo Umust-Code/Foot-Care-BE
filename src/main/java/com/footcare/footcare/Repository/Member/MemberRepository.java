@@ -20,11 +20,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findByName(String name);
 
     // 전체 사용자 수
-    @Query("SELECT COUNT(m) FROM Member m")
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.memberId <> 1")
     Long countAllMembers();
 
     // 성별 구분 사용자 수
-    @Query("SELECT m.sex, COUNT(m) FROM Member m GROUP BY m.sex")
+    @Query("SELECT m.sex, COUNT(m) FROM Member m WHERE m.memberId <> 1 GROUP BY m.sex")
     List<Object[]> countMembersByGender();
 
     // 월별 신규 가입자 수
