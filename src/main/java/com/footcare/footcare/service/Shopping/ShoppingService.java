@@ -52,7 +52,7 @@ public class ShoppingService {
             System.out.println("✅ 기존 토큰 유지");
         }
 
-        String originProductNo = "11419155675"; // 상품번호
+        String originProductNo = "50068233"; // 그룹상품번호
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
