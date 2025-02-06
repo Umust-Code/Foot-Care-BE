@@ -184,6 +184,8 @@ public class PostService {
             postRepository.save(post);
             PostDTO postDTO = convertToDTO(post);
             postDTO.setMemberId(post.getPostMembers().get(0).getMember().getMemberId());
+            postDTO.setName(post.getPostMembers().get(0).getMember().getName());
+            postDTO.setIcon(post.getPostMembers().get(0).getMember().getIcon());
             return Optional.of(postDTO);
         }
         return Optional.empty();

@@ -20,6 +20,8 @@ public class PostDTO {
     private Long postView;
     private LocalDate createdDate; // 게시물 생성 날짜
     private Long memberId;
+    private String name;
+    private String Icon;
     private String postFg;
 
     private Long likeCount;
