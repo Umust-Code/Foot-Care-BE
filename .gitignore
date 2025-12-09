@@ -36,3 +36,8 @@ application.properties
 
 ### VS Code ###
 .vscode/
+### tags ###
+tags
+### swap.file ###
+*.swp
+
